@@ -27,10 +27,6 @@ class List extends Component {
     return this.state.product_data.filter((data) => data.product_category === category);
   }
 
-  _disabledAlert = () => {
-    Alert.alert("Fitur ini belum berfungsi ya")
-  }
-
   componentDidMount(){
     const { navigation } = this.props;
     const itemId = navigation.getParam('itemId');
@@ -68,9 +64,6 @@ class List extends Component {
                       color="#FEB557"
                     />
                   }
-                  onPress={() =>
-                            this._disabledAlert()
-                          }
                   />
                 </View>
                 <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -83,9 +76,7 @@ class List extends Component {
                       color="#FEB557"
                     />
                   }
-                  onPress={() =>
-                            this._disabledAlert()
-                          }
+                  disabled
                   />
                 </View>
               </CardAction>

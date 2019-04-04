@@ -1,59 +1,112 @@
 import React, { Component } from 'react';
-import { Alert, View, Text, Image, FlatList, ScrollView } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Alert } from 'react-native';
+import { Button, ListItem, SearchBar } from 'react-native-elements';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Button, SearchBar } from 'react-native-elements';
 
-class List extends Component {
+class FlatListDemo extends Component {
+  constructor(props) {
+    super(props);
 
-  constructor () {
-    super();
     this.state = {
-      product_categories: [
-        { key: '0', name: 'Medicine', image: 'https://i.all3dp.com/wp-content/uploads/2019/02/21173628/3d-printed-drugs-bioprinting-world-190216.jpg' },
-        { key: '1', name: 'Sport', image: 'http://cdn2.tstatic.net/medan/foto/bank/images2/rossi-asapi-duo-honda-lorenzo-dan-marquez.jpg' },
-        { key: '2', name: 'Food', image: 'https://d22ir9aoo7cbf6.cloudfront.net/wp-content/uploads/sites/2/2017/08/dim-sum-local-food.jpg' },
-        { key: '4', name: 'Pet', image: 'https://d17fnq9dkz9hgj.cloudfront.net/uploads/2017/06/why-are-dogs-scared-of-firework-header.jpg' },
-        { key: '5', name: 'Medicine', image: 'https://i.all3dp.com/wp-content/uploads/2019/02/21173628/3d-printed-drugs-bioprinting-world-190216.jpg' },
-        { key: '6', name: 'Sport', image: 'http://cdn2.tstatic.net/medan/foto/bank/images2/rossi-asapi-duo-honda-lorenzo-dan-marquez.jpg' },
-        { key: '7', name: 'Food', image: 'https://d22ir9aoo7cbf6.cloudfront.net/wp-content/uploads/sites/2/2017/08/dim-sum-local-food.jpg' },
-        { key: '8', name: 'Pet', image: 'https://d17fnq9dkz9hgj.cloudfront.net/uploads/2017/06/why-are-dogs-scared-of-firework-header.jpg' },
-        { key: '9', name: 'Medicine', image: 'https://i.all3dp.com/wp-content/uploads/2019/02/21173628/3d-printed-drugs-bioprinting-world-190216.jpg' },
-        { key: '10', name: 'Sport', image: 'http://cdn2.tstatic.net/medan/foto/bank/images2/rossi-asapi-duo-honda-lorenzo-dan-marquez.jpg' },
-        { key: '11', name: 'Food', image: 'https://d22ir9aoo7cbf6.cloudfront.net/wp-content/uploads/sites/2/2017/08/dim-sum-local-food.jpg' },
-        { key: '12', name: 'Pet', image: 'https://d17fnq9dkz9hgj.cloudfront.net/uploads/2017/06/why-are-dogs-scared-of-firework-header.jpg' },
-      ],
-      arrayHolder: [],
-      textInput_Holder: ''
-    }
+      loading: false,
+      data: [],
+      error: null,
+    };
+
+    this.arrayholder = [];
+  }
+
+  // Internal Home Config
+  componentDidMount() {
+    this.makeRemoteRequest();
   }
 
   static navigationOptions = {
     header: null,
   };
+  // ./Internal Home Config
 
-  _alert = (s) => {
-    Alert.alert(s)
-  }
+  // External Home Config
+  makeRemoteRequest = () => {
+    const url = `https://api.jsonbin.io/b/5ca5920134241f2ab5e24247/2`;
+    this.setState({ loading: true });
 
-  _disabledAlert = () => {
-    Alert.alert("Fitur ini belum berfungsi ya")
-  }
+    fetch(url)
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          data: res.product_categories,
+          error: res.error || null,
+          loading: false,
+        });
+        this.arrayholder = res.product_categories;
+        // Alert.alert(JSON.stringify(res))
+      })
+      .catch(error => {
+        this.setState({ error, loading: false });
+        // Alert.alert(JSON.stringify(error))
+      });
+  };
+
+  renderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: '86%',
+          backgroundColor: '#CED0CE',
+          marginLeft: '14%',
+        }}
+      />
+    );
+  };
+
+  searchFilterFunction = text => {
+    this.setState({
+      value: text,
+    });
+
+    const newData = this.arrayholder.filter(item => {
+      const itemData = `${item.name.toUpperCase()}`;
+      const textData = text.toUpperCase();
+
+      return itemData.indexOf(textData) > -1;
+    });
+    this.setState({
+      data: newData,
+    });
+  };
+
+  renderHeader = () => {
+    return (
+      <SearchBar
+        placeholder="Type Here..."
+        lightTheme
+        round
+        onChangeText={text => this.searchFilterFunction(text)}
+        autoCorrect={false}
+        value={this.state.value}
+      />
+    );
+  };
+  // ./External Home Config
 
   render() {
+    if (this.state.loading) {
+      return (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
     return (
-      <ScrollView>
-        <SearchBar
-          lightTheme
-          placeholder="Cari disini..."
-          onChangeText={this.updateSearch}
-          disabled
-        />
-        <View>
-          <FlatList
-            data={this.state.product_categories}
-            numColumns={2}
-            renderItem={({item}) =>
+      <View style={{ flex: 1 }}>
+        <FlatList
+          data={this.state.data}
+          numColumns={2}
+          renderItem={({ item }) => (
+
             <Card>
               <CardImage
                 source={{uri: item.image}}
@@ -91,19 +144,21 @@ class List extends Component {
                       color="#FEB557"
                     />
                   }
-                  onPress={() =>
-                            this._disabledAlert()
-                          }
+                  disabled
                   />
                 </View>
               </CardAction>
             </Card>
-            }
-          />
-        </View>
-      </ScrollView>
-    )
+
+
+          )}
+          keyExtractor={item => item.key.toString()}
+          ItemSeparatorComponent={this.renderSeparator}
+          ListHeaderComponent={this.renderHeader}
+        />
+      </View>
+    );
   }
 }
 
-export default List;
+export default FlatListDemo;

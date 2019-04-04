@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
-import { ListItem, SearchBar } from 'react-native-elements';
+import { View, Text, FlatList, ActivityIndicator, Alert } from 'react-native';
+import { Button, ListItem, SearchBar } from 'react-native-elements';
+import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 class FlatListDemo extends Component {
   constructor(props) {
@@ -15,26 +17,35 @@ class FlatListDemo extends Component {
     this.arrayholder = [];
   }
 
+  // Internal Home Config
   componentDidMount() {
     this.makeRemoteRequest();
   }
 
+  static navigationOptions = {
+    header: null,
+  };
+  // ./Internal Home Config
+
+  // External Home Config
   makeRemoteRequest = () => {
-    const url = `https://randomuser.me/api/?&results=20`;
+    const url = `https://api.jsonbin.io/b/5ca5920134241f2ab5e24247/2`;
     this.setState({ loading: true });
 
     fetch(url)
       .then(res => res.json())
       .then(res => {
         this.setState({
-          data: res.results,
+          data: res.product_categories,
           error: res.error || null,
           loading: false,
         });
-        this.arrayholder = res.results;
+        this.arrayholder = res.product_categories;
+        // Alert.alert(JSON.stringify(res))
       })
       .catch(error => {
         this.setState({ error, loading: false });
+        // Alert.alert(JSON.stringify(error))
       });
   };
 
@@ -57,7 +68,7 @@ class FlatListDemo extends Component {
     });
 
     const newData = this.arrayholder.filter(item => {
-      const itemData = `${item.name.title.toUpperCase()} ${item.name.first.toUpperCase()} ${item.name.last.toUpperCase()}`;
+      const itemData = `${item.name.toUpperCase()}`;
       const textData = text.toUpperCase();
 
       return itemData.indexOf(textData) > -1;
@@ -79,6 +90,7 @@ class FlatListDemo extends Component {
       />
     );
   };
+  // ./External Home Config
 
   render() {
     if (this.state.loading) {
@@ -92,14 +104,55 @@ class FlatListDemo extends Component {
       <View style={{ flex: 1 }}>
         <FlatList
           data={this.state.data}
+          numColumns={2}
           renderItem={({ item }) => (
-            <ListItem
-              leftAvatar={{ source: { uri: item.picture.thumbnail } }}
-              title={`${item.name.first} ${item.name.last}`}
-              subtitle={item.email}
-            />
+
+            <Card>
+              <CardImage
+                source={{uri: item.image}}
+                title={item.name}
+              />
+              <CardAction
+                style={{ flexDirection: 'row' }}
+                separator={true}
+                inColumn={false}>
+                <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+                <Button
+                  buttonStyle={{ backgroundColor: 'transparent' }}
+                  icon={
+                    <Icon
+                      name="eye"
+                      size={25}
+                      color="#FEB557"
+                    />
+                  }
+                  onPress={() => this.props.navigation.navigate('Category', {
+                                itemId: item.key,
+                                otherParam: item.name,
+                              }
+                            )
+                          }
+                  />
+                </View>
+                <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                <Button
+                  buttonStyle={{ backgroundColor: 'transparent' }}
+                  icon={
+                    <Icon
+                      name="cart-plus"
+                      size={25}
+                      color="#FEB557"
+                    />
+                  }
+                  disabled
+                  />
+                </View>
+              </CardAction>
+            </Card>
+
+
           )}
-          keyExtractor={item => item.email}
+          keyExtractor={item => item.key.toString()}
           ItemSeparatorComponent={this.renderSeparator}
           ListHeaderComponent={this.renderHeader}
         />

@@ -7,6 +7,8 @@
 - [ ] Detail & Add to Cart Product List Item
 - [ ] Search Process
 - [ ] Search By Similar Word (NLP)
+- [ ] ================ EDGE ===================
+- [ ] Rapi Rapi JSON data
 - [ ] Layouting Image Ads & Categories
 - [ ] Disable Rotate Screen
 - [ ] Slider -> Image Ads
