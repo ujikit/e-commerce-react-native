@@ -4,7 +4,7 @@ import { Button, ListItem, SearchBar } from 'react-native-elements';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-class FlatListDemo extends Component {
+class Home extends Component {
   constructor(props) {
     super(props);
 
@@ -150,7 +150,6 @@ class FlatListDemo extends Component {
               </CardAction>
             </Card>
 
-
           )}
           keyExtractor={item => item.key.toString()}
           ItemSeparatorComponent={this.renderSeparator}
@@ -161,4 +160,4 @@ class FlatListDemo extends Component {
   }
 }
 
-export default FlatListDemo;
+export default Home;
