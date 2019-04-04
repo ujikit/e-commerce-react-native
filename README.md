@@ -4,8 +4,8 @@
 - [x] Layout List
 - [x] Dynamic Data
 - [X] UI Detail & Add to Cart Product List Item
+- [x] Search Process
 - [ ] Detail & Add to Cart Product List Item
-- [ ] Search Process
 - [ ] Search By Similar Word (NLP)
 - [ ] ================ EDGE ===================
 - [ ] Rapi Rapi JSON data
