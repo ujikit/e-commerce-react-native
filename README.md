@@ -10,7 +10,7 @@
 - [ ] Rapikan Format Data - Sinergi Antar View
 - [ ] Search By Similar Word (NLP)
 - [ ] Login
-============== EDGE =================
+- ============== EDGE =================
 - [ ] ADD JSON product detail: location
 - [ ] Search Not Found
 - [ ] Layouting Image Ads & Categories
