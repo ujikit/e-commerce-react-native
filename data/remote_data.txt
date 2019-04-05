@@ -1,0 +1,4 @@
+category:
+- https://api.myjson.com/bins/vgp28 (4)
+product_list:
+- https://api.myjson.com/bins/w49ts (6)

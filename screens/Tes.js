@@ -1,117 +1,70 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ActivityIndicator, Alert } from 'react-native';
-import { Button, ListItem, SearchBar } from 'react-native-elements';
+import { Alert, View, Text, Image, FlatList, ScrollView } from 'react-native'
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Button, SearchBar } from 'react-native-elements';
 
-class FlatListDemo extends Component {
-  constructor(props) {
-    super(props);
+class Tes extends Component {
 
+  constructor () {
+    super();
     this.state = {
-      loading: false,
-      data: [],
-      error: null,
+      product_data: [
+
+      ],
+      product_filtered: [],
+      category: []
     };
-
-    this.arrayholder = [];
+    this.arrayholder = []
   }
 
-  // Internal Home Config
-  componentDidMount() {
-    this.makeRemoteRequest();
+  componentDidMount(){
+    this._filterData();
+    const { navigation } = this.props;
+    const navigate_product_category_key = 1;
+    const navigate_product_category_name = "Pet";
+    const dataBaru = this._filterData(navigate_product_category_name);
+    this.setState({
+      category: navigate_product_category_name,
+      product_filtered: dataBaru
+    });
   }
 
-  static navigationOptions = {
-    header: null,
-  };
-  // ./Internal Home Config
+  _filterData = (category) => {
+    let data = [
+      { product_data_key: 0, product_data_category: 'Medicine', product_data_name: 'Paracetamol', product_data_image: 'https://doktersehat.com/wp-content/uploads/2017/11/paracetamol.jpg', product_data_price: '30000', product_data_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' },
+      { product_data_key: 1, product_data_category: 'Medicine', product_data_name: 'Paramex Anti Pusing', product_data_image: 'https://www.konimex.com/0_repository/images/paramex(3).jpg', product_data_price: '40000', product_data_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' },
+      { product_data_key: 2, product_data_category: 'Pet', product_data_name: 'Di jual kuda mumer!!', product_data_image: 'https://cdn.brilio.net/news/2016/06/12/65328/302396-kai-kuda.jpg', product_data_price: '50000', product_data_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' },
+      { product_data_key: 3, product_data_category: 'Pet', product_data_name: 'Kucing imut nih, monggo', product_data_image: 'https://www.ayobandung.com/images-bandung/post/articles/2018/08/08/36464/kucing.jpg', product_data_price: '50000', product_data_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' },
+      { product_data_key: 5, product_data_category: 'Medicine', product_data_name: 'Pusing Kuliah Coyy', product_data_image: 'https://vignette.wikia.nocookie.net/tolololpedia/images/c/cc/Obat_Pusing_Kuliah.jpg/revision/latest?cb=20130930112130', product_data_price: '100000', product_data_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' },
+    ]
 
-  // External Home Config
-  makeRemoteRequest = () => {
-    const url = `https://api.jsonbin.io/b/5ca5920134241f2ab5e24247/2`;
-    this.setState({ loading: true });
-
-    fetch(url)
-      .then(res => res.json())
-      .then(res => {
-        this.setState({
-          data: res.product_categories,
-          error: res.error || null,
-          loading: false,
-        });
-        this.arrayholder = res.product_categories;
-        // Alert.alert(JSON.stringify(res))
-      })
-      .catch(error => {
-        this.setState({ error, loading: false });
-        // Alert.alert(JSON.stringify(error))
-      });
-  };
-
-  renderSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: '86%',
-          backgroundColor: '#CED0CE',
-          marginLeft: '14%',
-        }}
-      />
-    );
-  };
-
-  searchFilterFunction = text => {
-    this.setState({
-      value: text,
+    let arrayBaru = [];
+    data.forEach(function(element) {
+      if (category == element.product_data_category) {
+        arrayBaru.push(element)
+      }
     });
-
-    const newData = this.arrayholder.filter(item => {
-      const itemData = `${item.name.toUpperCase()}`;
-      const textData = text.toUpperCase();
-
-      return itemData.indexOf(textData) > -1;
-    });
-    this.setState({
-      data: newData,
-    });
-  };
-
-  renderHeader = () => {
-    return (
-      <SearchBar
-        placeholder="Type Here..."
-        lightTheme
-        round
-        onChangeText={text => this.searchFilterFunction(text)}
-        autoCorrect={false}
-        value={this.state.value}
-      />
-    );
-  };
-  // ./External Home Config
+    // Alert.alert(
+    //   'Alert Title',
+    //   `${JSON.stringify(arrayBaru)}`
+    // );
+    return arrayBaru
+  }
 
   render() {
-    if (this.state.loading) {
-      return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator />
-        </View>
-      );
-    }
     return (
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={this.state.data}
-          numColumns={2}
-          renderItem={({ item }) => (
-
+      <ScrollView>
+        <View>
+          <FlatList
+            data={this.state.product_filtered}
+            numColumns={2}
+            renderItem={({item}) =>
             <Card>
               <CardImage
-                source={{uri: item.image}}
-                title={item.name}
+                source={{uri: item.product_data_image}}
               />
+              <CardContent text={item.product_data_name} />
               <CardAction
                 style={{ flexDirection: 'row' }}
                 separator={true}
@@ -126,9 +79,11 @@ class FlatListDemo extends Component {
                       color="#FEB557"
                     />
                   }
-                  onPress={() => this.props.navigation.navigate('Category', {
-                                itemId: item.key,
-                                otherParam: item.name,
+                  onPress={() => this.props.navigation.navigate('ProductDetail', {
+                                productName: item.product_data_name,
+                                productPrice: item.product_data_price,
+                                productImage: item.product_data_image,
+                                productDescription: item.product_data_description
                               }
                             )
                           }
@@ -149,16 +104,13 @@ class FlatListDemo extends Component {
                 </View>
               </CardAction>
             </Card>
-
-
-          )}
-          keyExtractor={item => item.key.toString()}
-          ItemSeparatorComponent={this.renderSeparator}
-          ListHeaderComponent={this.renderHeader}
-        />
-      </View>
-    );
+            }
+            keyExtractor={item => item.product_data_key.toString()}
+          />
+        </View>
+      </ScrollView>
+    )
   }
 }
 
-export default FlatListDemo;
+export default Tes;

@@ -9,6 +9,12 @@
 // 	<Text style={{ textDecorationLine: 'line-through', fontSize: 15 }}>{this._formatRupiah(priceHolder)}</Text>
 // </View>
 
+// Alert.alert(
+//   'Alert Title',
+//   `${JSON.stringify(navigate_product_category_key)} && ${JSON.stringify(navigate_product_category_name)}`
+// );
+
+
 function formatCurrency(num) {
 
         num = num.toString().replace(/\Rp|/g,'');
