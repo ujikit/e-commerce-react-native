@@ -81,7 +81,7 @@ export default class Checkout extends React.Component {
             <Button style={{ backgroundColor: '#FEB557' }} onPress={() => this.props.navigation.navigate('Home')}>
               <Icon type="FontAwesome" name="home" style={{ color: 'white'}} />
             </Button>
-            <Button style={{ backgroundColor: 'green' }} >
+            <Button style={{ backgroundColor: 'green' }} onPress={() => this.props.navigation.navigate('ProductConfirmation')}>
               <View>
                 <Text style={{ textAlign: 'center', color: 'white', fontSize: 14 }}>
                   {`Next -> Confirmation`}
