@@ -1,24 +1,40 @@
 import React, { Component } from 'react';
-import { Alert, StyleSheet, Image, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
+import { Alert, StyleSheet, FlatList, Image, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import { Body, Button, Container, Footer, FooterTab, Header, Input, Content, Card, CardItem, Icon, Left, Right, Text, Thumbnail } from 'native-base';
 
 export default class ProductCart extends React.Component {
-  static navigationOptions = {
-    title: 'Confirmation',
-  };
+
   constructor(props) {
     super(props);
       this.state = {
         product_quantity: 0,
-        data: [
-          { "product_name": "Paramex Anti Pusing", "money": 100000 }
-        ]
+        product_data: [
+
+        ],
+        sum_all_price: undefined,
+        final_price: undefined
       }
   }
 
   componentDidMount(){
-
+    const { navigation } = this.props;
+    const { data_cart, total_price, payment_price, courier_price } = navigation.state.params;
+    const sum_all_price = data_cart.map(item => item.temp_product_data_price);
+    const final_price = parseInt(this._totalPrice(sum_all_price), 10) + parseInt(courier_price, 10);
+    // return Alert.alert(
+    //   ``,
+    //   `data_cart: ${JSON.stringify(data_cart)} payment_price: ${JSON.stringify(payment_price)} courier_price: ${JSON.stringify(courier_price)} sum_all_price: ${JSON.stringify(this._totalPrice(sum_all_price))} final_price: ${JSON.stringify(final_price)}`
+    // )
+    this.setState({
+      product_data: data_cart,
+      payment_price: payment_price,
+      courier_price: courier_price,
+      sum_all_price: this._totalPrice(sum_all_price),
+      final_price: final_price
+    })
   }
+
+  _totalPrice = arr => arr.reduce((accumulator, currentValue) => parseInt(accumulator, 10) + parseInt(currentValue, 10))
 
   _formatRupiah = (num) => {
     num = num.toString().replace(/\Rp|/g,'');
@@ -36,49 +52,36 @@ export default class ProductCart extends React.Component {
     return `${num}`
   }
 
-  _incQuantity = () => {
-    const newCounter = this.state.product_quantity+1;
-    return this.setState({
-      product_quantity: newCounter,
-      final_price: this.money*newCounter
-    })
-  }
-
-  _decQuantity = () => {
-    const newCounter = this.state.product_quantity-1;
-    if (newCounter.toString().match(/-/g)) { return Alert.alert('My apologize, you have reached a limit order.'); }
-    return this.setState({
-      product_quantity: newCounter,
-      final_price: this.money*newCounter
-    })
-  }
-
-  _deleteCartItem = () => {
-    return Alert.alert('tes')
-  }
-
   render() {
     return (
       <Container>
-        <Content style={{ paddingLeft: 7, paddingRight: 7, paddingTop: 5 }}>
-          <Card>
-            <CardItem>
-              <Left>
-                <Thumbnail source={{uri: 'https://doktersehat.com/wp-content/uploads/2017/11/paracetamol.jpg'}} />
-                <Body>
-                  <Text>1. Paramex Anti Pusing</Text>
-                  <Text note>{`Total: Rp. ${this._formatRupiah(this.state.data[0].money)}`}</Text>
-                </Body>
-              </Left>
-            </CardItem>
-          </Card>
+        <Content style={{ paddingLeft: 4, paddingRight: 4, paddingTop: 5 }}>
+          <FlatList
+            data={this.state.product_data}
+            numColumns={1}
+            renderItem={({ item }) => (
+              <Card>
+                <CardItem>
+                  <Left>
+                    <Thumbnail source={{uri: `${item.product_data_image}`}} />
+                    <Body>
+                      <Text>{ item.product_data_name }</Text>
+                      <Text note>{`Total: Rp. ${this._formatRupiah(item.temp_product_data_price)}`}</Text>
+                    </Body>
+                  </Left>
+                </CardItem>
+              </Card>
+            )}
+            keyExtractor={item => item.product_data_key.toString()}
+            ItemSeparatorComponent={this.renderSeparator}
+          />
           <View style={{ marginTop: 4 }}>
             <View style={{ flexDirection: 'row', paddingTop: 3.5, paddingRight: 7 }}>
               <View style={{ flex: 5, alignItems: 'flex-end' }}>
                 <Text style={{ fontSize: 12 }}>Subtotal:</Text>
               </View>
               <View style={{ flex: 3, alignItems: 'flex-end' }}>
-                <Text style={{ fontSize: 12 }}>Rp.20.000</Text>
+                <Text style={{ fontSize: 12 }}>{`${this.state.sum_all_price}`}</Text>
               </View>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 3.5, paddingRight: 7 }}>
@@ -86,7 +89,7 @@ export default class ProductCart extends React.Component {
                 <Text style={{ fontSize: 12 }}>Shipping Fee:</Text>
               </View>
               <View style={{ flex: 3, alignItems: 'flex-end' }}>
-                <Text style={{ fontSize: 12 }}>Rp.20.000</Text>
+                <Text style={{ fontSize: 12 }}>{`${this.state.courier_price}`}</Text>
               </View>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 8, paddingRight: 7 }}>
@@ -94,26 +97,23 @@ export default class ProductCart extends React.Component {
                 <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Total:</Text>
               </View>
               <View style={{ flex: 3, alignItems: 'flex-end' }}>
-                <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'orange' }}>Rp.20.000</Text>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'orange' }}>{`${this.state.final_price}`}</Text>
               </View>
             </View>
           </View>
         </Content>
         <Footer>
           <FooterTab>
-            <Button style={{ backgroundColor: '#FEB557' }} onPress={() => this.props.navigation.navigate('Home')}>
-              <Icon type="FontAwesome" name="home" style={{ color: 'white'}} />
-            </Button>
-            <Button style={{ backgroundColor: 'green' }}  onPress={() => this.props.navigation.navigate('ProductTransactionComplete')}>
-              <View>
-                <Text style={{ textAlign: 'center', color: 'white', fontSize: 14 }}>
-                  {`Order Now`}
-                </Text>
-              </View>
-            </Button>
-            <Button style={{ backgroundColor: '#FEB557' }} onPress={() => this.props.navigation.navigate('ProductCart')}>
-              <Icon name="cart" style={{ color: 'white'}} />
-            </Button>
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+              <Button style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} success
+                onPress={() => this.props.navigation.navigate('ProductTransactionComplete', {
+                            data_cart: this.state.data_cart
+                          })
+                        }
+                >
+                <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'white' }}>Confirm</Text>
+              </Button>
+            </View>
           </FooterTab>
         </Footer>
       </Container>

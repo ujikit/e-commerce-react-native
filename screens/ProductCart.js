@@ -1,23 +1,64 @@
 import React, { Component } from 'react';
-import { Alert, StyleSheet, Image, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
-import { Body, Button, Container, Footer, FooterTab, Header, Input, Content, Card, CardItem, Icon, Left, Right, Text, Thumbnail } from 'native-base';
+import { Alert, StyleSheet, FlatList, Image, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
+import { Body, Button, Container, Footer, FooterTab, Header, Input, Content, Card, CardItem, Left, Right, Text, Thumbnail } from 'native-base';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-export default class ProductCart extends React.Component {
-  static navigationOptions = {
-    title: 'Product Cart',
-  };
+
+class ProductCart extends Component {
+
   constructor(props) {
     super(props);
-      this.state = {
-        product_quantity: 0,
-        final_price: 0
+    this.state = {
+      cartList: [
+
+      ],
+      product_quantity: 0,
+      final_price: 0,
+      all_product_data_price: [],
+      total_price: 0
+    }
+  }
+
+  componentWillMount() {
+    this.props.navigation.addListener("willFocus", route => {
+      const { navigation } = this.props;
+      const product_data_key = navigation.getParam('product_data_key');
+      const product_data_name = navigation.getParam('product_data_name');
+      const product_data_image = navigation.getParam('product_data_image');
+      const product_data_price = navigation.getParam('product_data_price');
+      const product_data_description = navigation.getParam('product_data_description');
+
+      if (product_data_key !== undefined) {
+        const findKey = this.state.cartList.findIndex((val, i) => {
+          return val.product_data_key === product_data_key;
+        });
+        if (findKey === -1) {
+          let cartList = this.state.cartList;
+          cartList.push({
+            product_data_key: product_data_key,
+            product_data_name: product_data_name,
+            product_data_image: product_data_image,
+            product_data_price: product_data_price,
+            product_data_description: product_data_description,
+            temp_product_data_quantity: 1,
+            temp_product_data_price: product_data_price
+          });
+
+          const total1 = this.state.cartList.map(item => item.temp_product_data_price)
+          const total2 = this._totalPrice(total1)
+          this.setState({
+            cartList: cartList,
+            total_price: total2
+          })
+        }
       }
-      this.money = 100000;
+    })
   }
 
-  componentDidMount(){
-
+  componentDidMount() {
   }
+
+  _totalPrice = arr => arr.reduce((accumulator, currentValue) => parseInt(accumulator, 10) + parseInt(currentValue, 10))
 
   _formatRupiah = (num) => {
     num = num.toString().replace(/\Rp|/g,'');
@@ -69,20 +110,27 @@ export default class ProductCart extends React.Component {
     }
   }
 
-  _incQuantity = () => {
-    const newCounter = this.state.product_quantity+1;
-    return this.setState({
-      product_quantity: newCounter,
-      final_price: this.money*newCounter
+  _incQuantity = (index) => {
+    this.state.cartList[index].temp_product_data_quantity = this.state.cartList[index].temp_product_data_quantity+1
+    this.state.cartList[index].temp_product_data_price = parseInt(this.state.cartList[index].temp_product_data_quantity, 10)*parseInt(this.state.cartList[index].product_data_price, 10)
+    this.forceUpdate()
+
+    const total1 = this.state.cartList.map(item => item.temp_product_data_price)
+    const total2 = this._totalPrice(total1)
+    this.setState({
+      total_price: total2
     })
   }
 
-  _decQuantity = () => {
-    const newCounter = this.state.product_quantity-1;
-    if (newCounter.toString().match(/-/g)) { return Alert.alert('My apologize, you have reached a limit order.'); }
-    return this.setState({
-      product_quantity: newCounter,
-      final_price: this.money*newCounter
+  _decQuantity = (index) => {
+    this.state.cartList[index].temp_product_data_quantity = this.state.cartList[index].temp_product_data_quantity-1
+    this.state.cartList[index].temp_product_data_price = parseInt(this.state.cartList[index].temp_product_data_quantity, 10)*parseInt(this.state.cartList[index].product_data_price, 10)
+    this.forceUpdate()
+
+    const total1 = this.state.cartList.map(item => item.temp_product_data_price)
+    const total2 = this._totalPrice(total1)
+    this.setState({
+      total_price: total2
     })
   }
 
@@ -91,62 +139,100 @@ export default class ProductCart extends React.Component {
   }
 
   render() {
+    const { navigate } = this.props.navigation;
+    if (this.state.cartList.length == 0) {
+      return (
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center',alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, color: '#c43a43' }}>
+            Empty Cart
+          </Text>
+        </View>
+      )
+    }
+
     return (
       <Container>
-        <Content style={{ paddingLeft: 7, paddingRight: 7, paddingTop: 5 }}>
-          <Card>
-            <CardItem>
-              <Left>
-                <Thumbnail source={{uri: 'https://doktersehat.com/wp-content/uploads/2017/11/paracetamol.jpg'}} />
-                <Body>
-                  <Text>1. Paramex Anti Pusing</Text>
-                  <Text note>{`Total: Rp. ${this._formatRupiah(this.state.final_price)}`}</Text>
-                </Body>
-              </Left>
-            </CardItem>
-            <CardItem>
-              <Left>
-                <Text note>{`Price: ${this._formatK(this.money)} x ${this.state.product_quantity}`}</Text>
-              </Left>
-              <Body style={{ marginRight: -120, marginBottom: -10 }}>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
-                  <Button success small transparent onPress={ () => this._decQuantity() }>
-                    <Icon name='arrow-back' style={{ fontSize: 20 }} />
-                  </Button>
-                  <View style={{ marginLeft: -5, marginTop: -11 }}>
-                    <Input placeholder={`${this.state.product_quantity}`} disabled />
-                  </View>
-                  <Button success small transparent onPress={ () => this._incQuantity() }>
-                    <Icon name='arrow-forward' style={{ fontSize: 20 }} />
-                  </Button>
-                </View>
-              </Body>
-              <Right>
-              <Button danger small onPress={ () => this._deleteCartItem() }>
-                <Icon name='trash' />
-              </Button>
-              </Right>
-            </CardItem>
-          </Card>
+        <Content>
+          <View style={{ flex: 1, flexDirection: 'column', paddingRight: 3.5, paddingLeft: 3.5 }}>
+            <ScrollView>
+              <FlatList
+                style={{ flex: 1 }}
+                data={this.state.cartList}
+                renderItem={({ item, index }) => (
+                  <Card>
+                    <CardItem>
+                      <Left>
+                        <Thumbnail source={{uri: `${item.product_data_image}`}} />
+                        <Body>
+                          <Text>{ item.product_data_name }</Text>
+                          <Text note>{`Total: Rp. ${item.temp_product_data_price}`}</Text>
+                        </Body>
+                      </Left>
+                    </CardItem>
+                    <CardItem>
+                    <Left>
+                      <Text note>{`Price: ${item.product_data_price}/pcs`}</Text>
+                    </Left>
+                    <Body style={{ marginRight: -120, marginBottom: -10 }}>
+                      <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <Button success small onPress={ () => this._decQuantity(index) } style={{ width: 20, justifyContent: 'center', alignItems: 'center' }}>
+                          <Icon name='minus' style={{ fontSize: 11, color: 'white' }} />
+                        </Button>
+                        <View style={{ marginLeft: 8, marginTop: -11 }}>
+                          <Input placeholder={`${item.temp_product_data_quantity}`} style={{ justifyContent: 'center', alignItems: 'center' }} disabled />
+                        </View>
+                        <Button success small onPress={ () => this._incQuantity(index) } style={{ width: 20, justifyContent: 'center', alignItems: 'center' }}>
+                          <Icon name='plus' style={{ fontSize: 11, color: 'white' }} />
+                        </Button>
+                      </View>
+                    </Body>
+                    <Right>
+                      <Button danger small onPress={ () => this._deleteCartItem() } style={{ width: 40, justifyContent: 'center', alignItems: 'center' }}>
+                        <Icon name='trash' style={{ fontSize: 11,color: 'white' }}/>
+                      </Button>
+                    </Right>
+                  </CardItem>
+                </Card>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              />
+            </ScrollView>
+          </View>
         </Content>
-        <Footer>
-          <FooterTab>
-            <Button style={{ backgroundColor: '#FEB557' }} onPress={() => this.props.navigation.navigate('Home')}>
-              <Icon type="FontAwesome" name="home" style={{ color: 'white'}} />
-            </Button>
-            <Button style={{ backgroundColor: 'green' }}  onPress={() => this.props.navigation.navigate('ProductCheckout')}>
-              <View>
-                <Text style={{ textAlign: 'center', color: 'white', fontSize: 14 }}>
-                  {`Next -> Checkout`}
+        <Footer style={{ height: 40 }}>
+          <FooterTab style={{ backgroundColor: '#c43a43' }}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{ flex: 1, justifyContent: 'flex-start', paddingLeft: 20 }}>
+                <Text style={{ fontWeight: 'bold', color: 'white' }}>
+                  Total:
                 </Text>
               </View>
-            </Button>
+              <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', paddingRight: 20 }}>
+                <Text style={{ fontWeight: 'bold', color: 'white' }}>
+                  Rp. {`${this.state.total_price}`}
+                </Text>
+              </View>
+            </View>
+          </FooterTab>
+        </Footer>
+        <Footer>
+          <FooterTab>
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+              <Button style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} success
+                onPress={() => navigate('ProductCheckout', {
+                            data_cart: this.state.cartList,
+                            total_price: this.state.total_price
+                          })
+                        }
+                >
+                <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'white' }}>Process to checkout</Text>
+              </Button>
+            </View>
           </FooterTab>
         </Footer>
       </Container>
     );
   }
 }
-const styles = StyleSheet.create({
 
-});
+export default ProductCart;

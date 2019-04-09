@@ -1,35 +1,41 @@
 import React, { Component } from 'react';
-import {StyleSheet, Image, Text, View, TouchableOpacity, ScrollView} from 'react-native';
-import { Container, Header, Left, Body, Right, Button, Content, Icon, Title, CardItem, Card, Col, Row, Grid, Footer, FooterTab } from 'native-base';
+import { Alert, StyleSheet, Image, Text, View, TouchableOpacity, ScrollView} from 'react-native';
+import { Container, Left, Body, Right, Button, Content, Icon, Title, CardItem, Card, Col, Row, Grid, Footer, FooterTab } from 'native-base';
 
 export default class ProductDetail extends React.Component {
-  static navigationOptions = {
-    title: 'Product Detail',
-  };
+
   constructor(props) {
     super(props);
-      this.state = {
-        count : 1,
-        product_data: [
-
-        ]
-      }
+    this.state = {
+      count : 1,
+      product_data: [],
+      button_cart_toogle: 'grey'
+    }
   }
 
   componentDidMount(){
     const { navigation } = this.props;
-    const productName = navigation.getParam('productName');
-    const productPrice = navigation.getParam('productPrice');
-    const productImage = navigation.getParam('productImage');
-    const productDescription = navigation.getParam('productDescription');
+    const product_data_key = navigation.getParam('product_data_key');
+    const product_data_name = navigation.getParam('product_data_name');
+    const product_data_price = navigation.getParam('product_data_price');
+    const product_data_image = navigation.getParam('product_data_image');
+    const product_data_description = navigation.getParam('product_data_description');
+
     this.setState({
       product_data: {
-        productName,
-        productPrice,
-        productImage,
-        productDescription
+        product_data_key,
+        product_data_name,
+        product_data_price,
+        product_data_image,
+        product_data_description
       }
     });
+  }
+
+  _saveToCart = () => {
+    this.setState({
+      button_cart_toogle: '#d8414a'
+    })
   }
 
   _formatRupiah = (num) => {
@@ -50,70 +56,67 @@ export default class ProductDetail extends React.Component {
 
   render() {
     return (
-      <Container>
+      <Container style={{ marginTop: -27 }}>
         <Content>
           <Card>
             <CardItem>
             </CardItem>
             <CardItem cardBody>
-              <Image source={{uri: this.state.product_data.productImage}} style={{height: 300, width: null, flex: 1}}/>
+              <Image source={{uri: `${this.state.product_data.product_data_image}`}} style={{height: 300, width: null, flex: 1}}/>
             </CardItem>
             <CardItem>
             <View style={{ flex: 1, flexDirection: 'column' }}>
-              <View style={{ flexDirection: 'row', marginBottom: 8 }}>
-                <Icon name='star' style={styles.starColor} />
-                <Icon name='star' style={styles.starColor}/>
-                <Icon name='star-half' style={styles.starColor} />
+              <View style={{ flex: 1, flexDirection: 'row', marginBottom: 8 }}>
+                <View style={{ flex: 5, flexDirection: 'row' }}>
+                  <Icon name='star' style={styles.starColor} />
+                  <Icon name='star' style={styles.starColor}/>
+                  <Icon name='star-half' style={styles.starColor} />
+                </View>
+                <View style={{ flex: 3, flexDirection: 'row', justifyContent: 'flex-end', marginTop: -8 }}>
+                  <Button transparent
+                    onPress={() =>
+                      this.props.navigation.navigate('ProductCart', {
+                            product_data_key: this.state.product_data.product_data_key,
+                            product_data_name: this.state.product_data.product_data_name,
+                            product_data_image: this.state.product_data.product_data_image,
+                            product_data_price: this.state.product_data.product_data_price,
+                            product_data_description: this.state.product_data.product_data_description
+                          }
+                        )
+                      }
+                    >
+                    <Icon name='cart' style={{ color: `${this.state.button_cart_toogle}`}}/>
+                  </Button>
+                </View>
               </View>
               <View style={{ justifyContent: 'flex-start', marginBottom: 8 }}>
-                <Text style={styles.textProduct}>{this.state.product_data.productName}</Text>
+                <Text style={styles.textProduct}>{this.state.product_data.product_data_name}</Text>
               </View>
               <View style={{ justifyContent: 'flex-start', marginBottom: 8 }}>
-                <Text style={styles.textPrice}>{`Rp. ${this.state.product_data.productPrice}`}</Text>
+                <Text style={styles.textPrice}>{`Rp.${this.state.product_data.product_data_price}`}</Text>
               </View>
               <View style={{ justifyContent: 'flex-start' }}>
-                <Text style={{ fontSize: 14 }}>{this.state.product_data.productDescription}</Text>
+                <Text style={{ fontSize: 14 }}>{this.state.product_data.product_data_description}</Text>
               </View>
             </View>
             </CardItem>
           </Card>
         </Content>
-        <Footer>
-          <FooterTab>
-            <Button style={{ backgroundColor: '#FEB557' }}>
-              <Icon name="chatboxes" style={{ color: 'white'}} />
-            </Button>
-            <Button style={{ backgroundColor: 'green' }}>
-              <Text style={{ color: 'white' }}>Buy Now</Text>
-            </Button>
-            <Button style={{ backgroundColor: '#FEB557' }} onPress={() => this.props.navigation.navigate('ProductCart')} >
-              <View style={{ position: 'absolute',height: 20, width: 20, borderRadius: 15, backgroundColor: 'rgba(95,197,123,0.8)', right: 35, bottom: 25, zIndex: 9999999, }}>
-                <Text style={{ textAlign: 'center', color: 'white' }}>
-                  0
-                </Text>
-              </View>
-              <Icon name="cart" style={{ color: 'white'}} />
-            </Button>
-          </FooterTab>
-        </Footer>
       </Container>
     );
   }
 }
 const styles = StyleSheet.create({
-  header: {
-  backgroundColor: '#E91E63',
-  },
   textProduct: {
     color: 'black',
     fontSize: 18
   },
   textPrice: {
-    color: '#E91E63',
+    color: '#d8414a',
     fontSize: 18
   },
   starColor: {
-    color: 'orange'
+    color: '#d8414a'
   },
   footer: {
     backgroundColor: 'white',

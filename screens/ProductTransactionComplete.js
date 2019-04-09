@@ -23,7 +23,7 @@ export default class ProductDetail extends React.Component {
         <Content>
           <View style={{ flex: 1, flexDirection: 'column', marginTop: 55 }}>
             <View style={{ alignItems: 'center' }}>
-              <Image style={{width: 115, height: 115}} source={require('../order-complete-shipped-human.png')} />
+              <Image style={{width: 115, height: 115}} source={require('../app/assets/order-complete-shipped-human.png')} />
             </View>
             <View style={{ marginTop: 22 }}>
               <Text style={{ fontSize: 21, textAlign: 'center', fontWeight: 'bold', color: 'orange' }}>
@@ -44,7 +44,7 @@ export default class ProductDetail extends React.Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button style={{ backgroundColor: '#FEB557' }} onPress={() => this.props.navigation.navigate('Home')}>
+            <Button style={{ backgroundColor: '#5cb85c' }} onPress={() => this.props.navigation.navigate('Home')}>
               <Icon type="FontAwesome" name="home" style={{ color: 'white'}} />
             </Button>
           </FooterTab>

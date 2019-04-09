@@ -6,6 +6,11 @@
 - [X] UI Detail & Add to Cart Product List Item
 - [x] Search Process (Category, !== Product List)
 - [x] Product List Item
+- [x] Footer Navigation
+- [x] Assets Folder
+- [x]	BUG - Add Quantity Multiple Cart (Trigger Event)
+- [x] BUG - Edit Current Value Input Component (CheckoutScreen), Solution: Pass All Data Through State On Change
+- [ ] Loading Data !== OTW Home, just load data into Home Screen data
 - [ ] Product List Item (Redux)
 - [ ] Rapikan Format Data - Sinergi Antar View
 - [ ] Search By Similar Word (NLP)
@@ -17,3 +22,6 @@
 - [ ] Disable Rotate Screen
 - [ ] Slider -> Image Ads
 - [ ] Slider -> Categories
+- ============ OPTIONAL ==============
+- [ ] Make Helper Directory -> Example: Number to Rupiah
+- [ ] Delete Back Header Button After Completing the Order
