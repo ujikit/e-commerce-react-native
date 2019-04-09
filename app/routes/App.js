@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 
-import RouteBottomNavigator from './routes/RouteBottomNavigator';
-import ProductDetail from './screens/ProductDetail';
-import ProductCartScreen from './screens/ProductCart';
-import ProductCheckoutScreen from './screens/ProductCheckout';
-import ProductTransactionCompleteScreen from './screens/ProductTransactionComplete';
-import ProductConfirmationScreen from './screens/ProductConfirmation';
+import RouteBottomNavigator from './RouteBottomNavigator';
+import ProductDetailScreen from '../screens/ProductDetail';
+import ProductCartScreen from '../screens/ProductCart';
+import ProductCheckoutScreen from '../screens/ProductCheckout';
+import ProductTransactionCompleteScreen from '../screens/ProductTransactionComplete';
+import ProductConfirmationScreen from '../screens/ProductConfirmation';
 
 const AppNavigator = createStackNavigator(
   {
@@ -19,7 +19,7 @@ const AppNavigator = createStackNavigator(
       }
     },
     ProductDetail: {
-      screen: ProductDetail,
+      screen: ProductDetailScreen,
       headerMode: '',
       navigationOptions: {
         title: 'Product Detail',

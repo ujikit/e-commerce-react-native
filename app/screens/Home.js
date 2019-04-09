@@ -22,7 +22,7 @@ export default class Home extends Component {
           <View style={{ flex: 5, backgroundColor: 'white', alignItems: 'flex-start' }}>
             <Image
               style={{width: 125, resizeMode: 'contain'}}
-              source={require('../app/assets/logo.png')}
+              source={require('../assets/logo.png')}
             />
           </View>
           <View style={{ flex: 3, backgroundColor: 'white', alignItems: 'flex-end' }}>

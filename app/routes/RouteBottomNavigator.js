@@ -2,14 +2,13 @@ import React from 'react';
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import Home from '../screens/Home';
+import HomeScreen from '../screens/Home';
 import ProductCart from '../screens/ProductCart';
-import ProductCheckoutScreen from '../screens/ProductCheckout';
 
 export const BottomNavigator = createBottomTabNavigator(
   {
     Home: {
-      screen: Home,
+      screen: HomeScreen,
       navigationOptions: ({ navigation }) => ({
         tabBarLabel: 'Home',
         tabBarIcon: ({tintColor}) => <FontAwesome name='home' style={{color: tintColor}} size={24}/>,
