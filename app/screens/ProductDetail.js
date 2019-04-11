@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Alert, StyleSheet, Image, Text, View, TouchableOpacity, ScrollView} from 'react-native';
 import { Container, Left, Body, Right, Button, Content, Icon, Title, CardItem, Card, Col, Row, Grid, Footer, FooterTab } from 'native-base';
+import Axios from 'axios';
 
 export default class ProductDetail extends React.Component {
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       count : 1,
       product_data: [],
@@ -13,45 +14,54 @@ export default class ProductDetail extends React.Component {
     }
   }
 
-  componentDidMount(){
-    const { navigation } = this.props;
-    const product_data_key = navigation.getParam('product_data_key');
-    const product_data_name = navigation.getParam('product_data_name');
-    const product_data_price = navigation.getParam('product_data_price');
-    const product_data_image = navigation.getParam('product_data_image');
-    const product_data_description = navigation.getParam('product_data_description');
-
+  componentWillMount(){
+    const { navigation } = this.props
+    const { key_product, category_product, name_product, price_product, image_product, description_product } = navigation.state.params
     this.setState({
       product_data: {
-        product_data_key,
-        product_data_name,
-        product_data_price,
-        product_data_image,
-        product_data_description
+        key_product: key_product,
+        category_product: category_product,
+        name_product: name_product,
+        price_product: price_product,
+        image_product: image_product,
+        description_product: description_product
       }
-    });
-  }
-
-  _saveToCart = () => {
-    this.setState({
-      button_cart_toogle: '#d8414a'
     })
   }
 
-  _formatRupiah = (num) => {
-    num = num.toString().replace(/\Rp|/g,'');
-    if(isNaN(num))
-        num = "0";
-    sign = (num == (num = Math.abs(num)));
-    num = Math.floor(num*100+0.50000000001);
-    cents = num%100;
-    num = Math.floor(num/100).toString();
-    if(cents<10)
-        cents = "0" + cents;
-    for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
-        num = num.substring(0,num.length-(4*i+3))+'.'+
-        num.substring(num.length-(4*i+3));
-    return `Rp. ${num},${cents}`
+  _saveToCart = () => {
+    Axios.post(`http://192.168.0.44:3333/api/v1/order`, {
+      key_product: this.state.product_data.key_product,
+      category_product: this.state.product_data.category_product,
+      name_product: this.state.product_data.name_product,
+      price_product: this.state.product_data.price_product,
+      image_product: this.state.product_data.image_product,
+      description_product: this.state.product_data.description_product
+    })
+    .then(res => {
+      if (res.data.status == `error`) {
+        return Alert.alert(
+          `Duplicated Data`,
+          `${res.data.data}`
+        )
+      }
+      else if (res.data.status == `success`) {
+        this.props.navigation.navigate('ProductCart', {
+            key_product: this.state.product_data.key_product,
+            category_product: this.state.product_data.category_product,
+            name_product: this.state.product_data.name_product,
+            price_product: this.state.product_data.price_product,
+            image_product: this.state.product_data.image_product,
+            description_product: this.state.product_data.description_product
+        })
+      }
+    })
+    .catch(error => {
+      return Alert.alert(
+        ``,
+        `Detail error: ${JSON.stringify(error)}`
+      )
+    })
   }
 
   render() {
@@ -62,7 +72,7 @@ export default class ProductDetail extends React.Component {
             <CardItem>
             </CardItem>
             <CardItem cardBody>
-              <Image source={{uri: `${this.state.product_data.product_data_image}`}} style={{height: 300, width: null, flex: 1}}/>
+              <Image source={{uri: `${this.state.product_data.image_product}`}} style={{height: 300, width: null, flex: 1}}/>
             </CardItem>
             <CardItem>
             <View style={{ flex: 1, flexDirection: 'column' }}>
@@ -74,36 +84,27 @@ export default class ProductDetail extends React.Component {
                 </View>
                 <View style={{ flex: 3, flexDirection: 'row', justifyContent: 'flex-end', marginTop: -8 }}>
                   <Button transparent
-                    onPress={() =>
-                      this.props.navigation.navigate('ProductCart', {
-                            product_data_key: this.state.product_data.product_data_key,
-                            product_data_name: this.state.product_data.product_data_name,
-                            product_data_image: this.state.product_data.product_data_image,
-                            product_data_price: this.state.product_data.product_data_price,
-                            product_data_description: this.state.product_data.product_data_description
-                          }
-                        )
-                      }
+                    onPress={() => this._saveToCart()}
                     >
                     <Icon name='cart' style={{ color: `${this.state.button_cart_toogle}`}}/>
                   </Button>
                 </View>
               </View>
               <View style={{ justifyContent: 'flex-start', marginBottom: 8 }}>
-                <Text style={styles.textProduct}>{this.state.product_data.product_data_name}</Text>
+                <Text style={styles.textProduct}>{this.state.product_data.name_product}</Text>
               </View>
               <View style={{ justifyContent: 'flex-start', marginBottom: 8 }}>
-                <Text style={styles.textPrice}>{`Rp.${this.state.product_data.product_data_price}`}</Text>
+                <Text style={styles.textPrice}>{`Rp.${this.state.product_data.price_product}`}</Text>
               </View>
               <View style={{ justifyContent: 'flex-start' }}>
-                <Text style={{ fontSize: 14 }}>{this.state.product_data.product_data_description}</Text>
+                <Text style={{ fontSize: 14 }}>{this.state.product_data.description_product}</Text>
               </View>
             </View>
             </CardItem>
           </Card>
         </Content>
       </Container>
-    );
+    )
   }
 }
 const styles = StyleSheet.create({
@@ -121,4 +122,4 @@ const styles = StyleSheet.create({
   footer: {
     backgroundColor: 'white',
   }
-  });
+  })

@@ -3,16 +3,30 @@
  import { ListItem, SearchBar } from 'react-native-elements';
  import { Button, Text, Card, CardItem, Body, Header, Thumbnail } from 'native-base';
  import Icon from 'react-native-vector-icons/FontAwesome5';
+ import Axios from 'axios';
 
 export default class Home extends Component {
-  state = {
-    "product_data":[
-      { "product_data_key": 0, "product_data_category": 'Medicine', "product_data_name": 'Paracetamol', "product_data_image": 'https://doktersehat.com/wp-content/uploads/2017/11/paracetamol.jpg', "product_data_price": '30000', "product_data_description": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' },
-      { "product_data_key": 1, "product_data_category": 'Medicine', "product_data_name": 'Paramex Anti Pusing', "product_data_image": 'https://www.konimex.com/0_repository/images/paramex(3).jpg', "product_data_price": '40000', "product_data_description": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' },
-      { "product_data_key": 2, "product_data_category": 'Pet', "product_data_name": 'Di jual kuda mumer!!', "product_data_image": 'https://cdn.brilio.net/news/2016/06/12/65328/302396-kai-kuda.jpg', "product_data_price": '50000', "product_data_description": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' },
-      { "product_data_key": 3, "product_data_category": 'Pet', "product_data_name": 'Kucing imut nih, monggo', "product_data_image": 'https://www.ayobandung.com/images-bandung/post/articles/2018/08/08/36464/kucing.jpg', "product_data_price": '50000', "product_data_description": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' },
-      { "product_data_key": 4, "product_data_category": 'Medicine', "product_data_name": 'Pusing Kuliah Coyy', "product_data_image": 'https://vignette.wikia.nocookie.net/tolololpedia/images/c/cc/Obat_Pusing_Kuliah.jpg/revision/latest?cb=20130930112130', "product_data_price": '100000', "product_data_description": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet. Sagittis vitae et leo duis ut diam quam. Faucibus a pellentesque sit amet.' }
-    ]
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      product_data: []
+    }
+  }
+
+  componentWillMount () {
+    Axios.get(`http://192.168.0.44:3333/api/v1/products`)
+    .then(res => {
+      this.setState({
+        product_data: res.data.data
+      })
+    })
+    .catch(error => {
+      Alert.alert(
+        ``,
+        `Home error: ${JSON.stringify(error)}`
+      )
+    })
   }
 
   render() {
@@ -30,14 +44,6 @@ export default class Home extends Component {
               <Button transparent primary style={{ marginLeft: 10 }}>
               </Button>
               <Button transparent primary style={{ marginLeft: 10 }}>
-              </Button>
-              <View style={{ position: 'absolute',height: 17, width: 17, borderRadius: 15, backgroundColor: '#d8414a', right: -8, bottom: 24, zIndex: 10000 }}>
-                <Text style={{ textAlign: 'center', color: 'white', fontSize: 12 }}>
-                  0
-                </Text>
-              </View>
-              <Button transparent primary style={{ marginLeft: 10 }}>
-                <Icon name='shopping-cart' size={19} />
               </Button>
             </View>
           </View>
@@ -81,22 +87,23 @@ export default class Home extends Component {
                   <Card>
                     <TouchableOpacity
                       onPress={() => this.props.navigation.navigate('ProductDetail', {
-                                    product_data_key: item.product_data_key,
-                                    product_data_name: item.product_data_name,
-                                    product_data_price: item.product_data_price,
-                                    product_data_image: item.product_data_image,
-                                    product_data_description: item.product_data_description
+                                    key_product: item.key_product,
+                                    category_product: item.category_product,
+                                    name_product: item.name_product,
+                                    price_product: item.price_product,
+                                    image_product: item.image_product,
+                                    description_product: item.description_product
                                   }
                                 )
                               }
                     >
                       <CardItem cardBody>
-                        <Image source={{uri: `${item.product_data_image}`}} style={{ height: 150, width: null, flex: 1 }} />
+                        <Image source={{uri: `${item.image_product}`}} style={{ height: 150, width: null, flex: 1 }} />
                       </CardItem>
                       <CardItem>
                         <Body>
-                          <Text style={{ fontSize: 14.5 }}>{ `${item.product_data_name.substring(0,16)}...` }</Text>
-                          <Text style={{ color: "#d8414a", fontSize: 13 }} >{ item.product_data_name.substring(0,10) }</Text>
+                          <Text style={{ fontSize: 14.5 }}>{ `${item.name_product.substring(0,16)}...` }</Text>
+                          <Text style={{ color: "#d8414a", fontSize: 13 }} >{ item.name_product.substring(0,10) }</Text>
                           <Text style={{ fontSize: 13 }}>Toko Maju Jaya </Text>
                         </Body>
                       </CardItem>
@@ -104,7 +111,7 @@ export default class Home extends Component {
                   </Card>
                 </View>
               )}
-              keyExtractor={item => item.product_data_key.toString()}
+              keyExtractor={item => item.key_product.toString()}
               ItemSeparatorComponent={this.renderSeparator}
             />
           </View>

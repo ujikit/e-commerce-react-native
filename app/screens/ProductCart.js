@@ -2,133 +2,105 @@ import React, { Component } from 'react';
 import { Alert, StyleSheet, FlatList, Image, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import { Body, Button, Container, Footer, FooterTab, Header, Input, Content, Card, CardItem, Left, Right, Text, Thumbnail } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Axios from 'axios';
 
+// Helper
+import { TotalPriceArray } from '../helper/TotalPriceArray'
 
 class ProductCart extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      cartList: [
-
-      ],
+      order_data: [],
       product_quantity: 0,
       final_price: 0,
-      all_product_data_price: [],
+      all_price_order: [],
       total_price: 0
     }
   }
 
   componentWillMount() {
     this.props.navigation.addListener("willFocus", route => {
+
       const { navigation } = this.props;
-      const product_data_key = navigation.getParam('product_data_key');
-      const product_data_name = navigation.getParam('product_data_name');
-      const product_data_image = navigation.getParam('product_data_image');
-      const product_data_price = navigation.getParam('product_data_price');
-      const product_data_description = navigation.getParam('product_data_description');
+      const final_order = []
 
-      if (product_data_key !== undefined) {
-        const findKey = this.state.cartList.findIndex((val, i) => {
-          return val.product_data_key === product_data_key;
-        });
-        if (findKey === -1) {
-          let cartList = this.state.cartList;
-          cartList.push({
-            product_data_key: product_data_key,
-            product_data_name: product_data_name,
-            product_data_image: product_data_image,
-            product_data_price: product_data_price,
-            product_data_description: product_data_description,
-            temp_product_data_quantity: 1,
-            temp_product_data_price: product_data_price
-          });
-
-          const total1 = this.state.cartList.map(item => item.temp_product_data_price)
-          const total2 = this._totalPrice(total1)
-          this.setState({
-            cartList: cartList,
-            total_price: total2
+      Axios.get(`http://192.168.0.44:3333/api/v1/orders`)
+      .then(res => {
+        if (res.data.data.length == 0) {
+          return 0
+        }
+        for (var i = 0; i < res.data.data.length; i++) {
+          final_order.push({
+            key_order: res.data.data[i].key_order,
+            category_order: res.data.data[i].category_order,
+            name_order: res.data.data[i].name_order,
+            image_order: res.data.data[i].image_order,
+            price_order: res.data.data[i].price_order,
+            description_order: res.data.data[i].description_order,
+            temp_quantity_order: 1,
+            temp_price_order: res.data.data[i].price_order
           })
         }
+        const init_total_price1 = res.data.data.map(item => item.price_order)
+        const init_total_price2 = TotalPriceArray(init_total_price1)
+        this.setState({
+          order_data: final_order,
+          total_price: init_total_price2
+        })
+      })
+      .catch(error => {
+        return Alert.alert(
+          ``,
+          `Cart error: ${JSON.stringify(error)}`
+        )
+      })
+
+      if (navigation.state.params === undefined) {
+        return 0
       }
+      else if (navigation.state.params !== undefined) {
+        const { key_product, category_product, name_product, price_product, image_product, description_product } = navigation.state.params
+        this.state.order_data.push({
+          product_data_key: key_product,
+          product_data_name: category_product,
+          product_data_name: name_product,
+          product_data_image: price_product,
+          product_data_price: image_product,
+          product_data_description: description_product,
+          temp_product_data_quantity: 1,
+          temp_product_data_price: price_product
+        });
+        this.setState({
+          order_data: this.state.order_data
+        })
+      }
+
     })
   }
 
-  componentDidMount() {
-  }
-
-  _totalPrice = arr => arr.reduce((accumulator, currentValue) => parseInt(accumulator, 10) + parseInt(currentValue, 10))
-
-  _formatRupiah = (num) => {
-    num = num.toString().replace(/\Rp|/g,'');
-    if(isNaN(num))
-      num = "0";
-    sign = (num == (num = Math.abs(num)));
-    num = Math.floor(num*100+0.50000000001);
-    cents = num%100;
-    num = Math.floor(num/100).toString();
-    if(cents<10)
-      cents = "0" + cents;
-    for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
-      num = num.substring(0,num.length-(4*i+3))+'.'+
-      num.substring(num.length-(4*i+3));
-    return `${num},${cents}`
-  }
-
-  _formatK = (num) => {
-    let data = num.toString().split("")
-    if (data.length >= 4) {
-      if (data.length === 11) {
-        data.length = 8;
-      }
-      if (data.length === 10) {
-        data.length = 7;
-      }
-      if (data.length === 9) {
-        data.length = 6;
-      }
-      if (data.length === 8) {
-        data.length = 5;
-      }
-      else if (data.length === 7) {
-        data.length = 4;
-      }
-      else if (data.length === 6) {
-        data.length = 3;
-      }
-      else if (data.length === 5) {
-        data.length = 2;
-      }
-      else if (data.length === 4) {
-        data.length = 1;
-      }
-      return `Rp.${data.join("")}K`
-    }
-    else {
-      return `Rp.${data.join("")}`
-    }
-  }
-
   _incQuantity = (index) => {
-    this.state.cartList[index].temp_product_data_quantity = this.state.cartList[index].temp_product_data_quantity+1
-    this.state.cartList[index].temp_product_data_price = parseInt(this.state.cartList[index].temp_product_data_quantity, 10)*parseInt(this.state.cartList[index].product_data_price, 10)
+    this.state.order_data[index].temp_quantity_order = this.state.order_data[index].temp_quantity_order+1
+    this.state.order_data[index].temp_price_order = parseInt(this.state.order_data[index].temp_quantity_order, 10)*parseInt(this.state.order_data[index].price_order, 10)
     this.forceUpdate()
 
-    const total1 = this.state.cartList.map(item => item.temp_product_data_price)
-    const total2 = this._totalPrice(total1)
+    const total1 = this.state.order_data.map(item => item.temp_price_order)
+    const total2 = TotalPriceArray(total1)
     this.setState({
       total_price: total2
     })
   }
 
   _decQuantity = (index) => {
-    this.state.cartList[index].temp_product_data_quantity = this.state.cartList[index].temp_product_data_quantity-1
-    this.state.cartList[index].temp_product_data_price = parseInt(this.state.cartList[index].temp_product_data_quantity, 10)*parseInt(this.state.cartList[index].product_data_price, 10)
+    const newCounter = this.state.order_data[index].temp_quantity_order-1;
+    if (newCounter.toString().match(/-/g)) { return Alert.alert('My apologize, you have reached a limit order.') }
+    this.state.order_data[index].temp_quantity_order = this.state.order_data[index].temp_quantity_order-1
+    this.state.order_data[index].temp_price_order = parseInt(this.state.order_data[index].temp_quantity_order, 10)*parseInt(this.state.order_data[index].price_order, 10)
     this.forceUpdate()
 
-    const total1 = this.state.cartList.map(item => item.temp_product_data_price)
-    const total2 = this._totalPrice(total1)
+    const total1 = this.state.order_data.map(item => item.temp_price_order)
+    const total2 = TotalPriceArray(total1)
     this.setState({
       total_price: total2
     })
@@ -140,7 +112,7 @@ class ProductCart extends Component {
 
   render() {
     const { navigate } = this.props.navigation;
-    if (this.state.cartList.length == 0) {
+    if (this.state.order_data.length == 0) {
       return (
         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center',alignItems: 'center' }}>
           <Text style={{ fontSize: 20, color: '#c43a43' }}>
@@ -157,21 +129,21 @@ class ProductCart extends Component {
             <ScrollView>
               <FlatList
                 style={{ flex: 1 }}
-                data={this.state.cartList}
+                data={this.state.order_data}
                 renderItem={({ item, index }) => (
                   <Card>
                     <CardItem>
                       <Left>
-                        <Thumbnail source={{uri: `${item.product_data_image}`}} />
+                        <Thumbnail source={{uri: `${item.image_order}`}} />
                         <Body>
-                          <Text>{ item.product_data_name }</Text>
-                          <Text note>{`Total: Rp. ${item.temp_product_data_price}`}</Text>
+                          <Text>{ item.name_order }</Text>
+                          <Text note>{`Total: Rp. ${item.temp_price_order}`}</Text>
                         </Body>
                       </Left>
                     </CardItem>
                     <CardItem>
                     <Left>
-                      <Text note>{`Price: ${item.product_data_price}/pcs`}</Text>
+                      <Text note>{`Price: ${item.price_order}/pcs`}</Text>
                     </Left>
                     <Body style={{ marginRight: -120, marginBottom: -10 }}>
                       <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -179,7 +151,7 @@ class ProductCart extends Component {
                           <Icon name='minus' style={{ fontSize: 11, color: 'white' }} />
                         </Button>
                         <View style={{ marginLeft: 8, marginTop: -11 }}>
-                          <Input placeholder={`${item.temp_product_data_quantity}`} style={{ justifyContent: 'center', alignItems: 'center' }} disabled />
+                          <Input placeholder={`${item.temp_quantity_order}`} style={{ justifyContent: 'center', alignItems: 'center' }} disabled />
                         </View>
                         <Button success small onPress={ () => this._incQuantity(index) } style={{ width: 20, justifyContent: 'center', alignItems: 'center' }}>
                           <Icon name='plus' style={{ fontSize: 11, color: 'white' }} />
@@ -199,7 +171,7 @@ class ProductCart extends Component {
             </ScrollView>
           </View>
         </Content>
-        <Footer style={{ height: 40 }}>
+        <Footer style={{ height: 30 }}>
           <FooterTab style={{ backgroundColor: '#c43a43' }}>
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <View style={{ flex: 1, justifyContent: 'flex-start', paddingLeft: 20 }}>
@@ -220,7 +192,7 @@ class ProductCart extends Component {
             <View style={{ flex: 1, flexDirection: 'row' }}>
               <Button style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} success
                 onPress={() => navigate('ProductCheckout', {
-                            data_cart: this.state.cartList,
+                            data_cart: this.state.order_data,
                             total_price: this.state.total_price
                           })
                         }

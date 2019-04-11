@@ -20,36 +20,15 @@ export default class ProductCart extends React.Component {
     const { navigation } = this.props;
     const { data_cart, total_price, payment_price, courier_price } = navigation.state.params;
     const sum_all_price = data_cart.map(item => item.temp_product_data_price);
-    const final_price = parseInt(this._totalPrice(sum_all_price), 10) + parseInt(courier_price, 10);
-    // return Alert.alert(
-    //   ``,
-    //   `data_cart: ${JSON.stringify(data_cart)} payment_price: ${JSON.stringify(payment_price)} courier_price: ${JSON.stringify(courier_price)} sum_all_price: ${JSON.stringify(this._totalPrice(sum_all_price))} final_price: ${JSON.stringify(final_price)}`
-    // )
+    const final_price = parseInt(sum_all_price, 10) + parseInt(courier_price, 10);
+
     this.setState({
       product_data: data_cart,
       payment_price: payment_price,
       courier_price: courier_price,
-      sum_all_price: this._totalPrice(sum_all_price),
+      sum_all_price: sum_all_price,
       final_price: final_price
     })
-  }
-
-  _totalPrice = arr => arr.reduce((accumulator, currentValue) => parseInt(accumulator, 10) + parseInt(currentValue, 10))
-
-  _formatRupiah = (num) => {
-    num = num.toString().replace(/\Rp|/g,'');
-    if(isNaN(num))
-      num = "0";
-    sign = (num == (num = Math.abs(num)));
-    num = Math.floor(num*100+0.50000000001);
-    cents = num%100;
-    num = Math.floor(num/100).toString();
-    if(cents<10)
-      cents = "0" + cents;
-    for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
-      num = num.substring(0,num.length-(4*i+3))+'.'+
-      num.substring(num.length-(4*i+3));
-    return `${num}`
   }
 
   render() {
@@ -66,7 +45,7 @@ export default class ProductCart extends React.Component {
                     <Thumbnail source={{uri: `${item.product_data_image}`}} />
                     <Body>
                       <Text>{ item.product_data_name }</Text>
-                      <Text note>{`Total: Rp. ${this._formatRupiah(item.temp_product_data_price)}`}</Text>
+                      <Text note>{`Total: Rp. ${ item.temp_product_data_price }`}</Text>
                     </Body>
                   </Left>
                 </CardItem>
