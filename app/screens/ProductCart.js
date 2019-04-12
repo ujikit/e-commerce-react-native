@@ -92,7 +92,7 @@ class ProductCart extends Component {
     })
   }
 
-  _decQuantity = (index) => {
+  _decQuantity = (index, name_order) => {
     const newCounter = this.state.order_data[index].temp_quantity_order-1;
     if (newCounter.toString().match(/-/g)) { return Alert.alert('My apologize, you have reached a limit order.') }
     this.state.order_data[index].temp_quantity_order = this.state.order_data[index].temp_quantity_order-1
@@ -106,8 +106,50 @@ class ProductCart extends Component {
     })
   }
 
-  _deleteCartItem = () => {
-    return Alert.alert('tes')
+  _deleteCartItem = (key_order, name_order) => {
+    for (var i = 0; i < this.state.order_data.length; i++) {
+    	if (this.state.order_data[i].key_order == key_order ) {
+    		this.state.order_data.splice(i, 1);
+    	}
+    }
+    const total1 = this.state.order_data.map(item => item.temp_price_order)
+    const total2 = TotalPriceArray(total1)
+
+    return Alert.alert(
+      'Delete cart item',
+      `Are you sure want to delete cart item as a "${name_order}" ?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK', onPress: () =>
+            Axios.delete(`http://192.168.0.44:3333/api/v1/order/${key_order}`)
+            .then(res => {
+              if (res.data.status == `success`) {
+                this.setState({
+                  order_data: this.state.order_data,
+                  total_price: total2
+                })
+              }
+            })
+            .catch(error => {
+              return Alert.alert( ``, `Delete cart error: ${JSON.stringify(error)}` )
+            })
+        },
+      ],
+      { cancelable: false },
+    )
+
+
+
+
+    // return Alert.alert(
+    //   ``,
+    //   // `key: ${JSON.stringify(key_order)} data: ${JSON.stringify(result)}`
+    //   `data: ${JSON.stringify(this.state.order_data)}`
+    // )
   }
 
   render() {
@@ -159,7 +201,7 @@ class ProductCart extends Component {
                       </View>
                     </Body>
                     <Right>
-                      <Button danger small onPress={ () => this._deleteCartItem() } style={{ width: 40, justifyContent: 'center', alignItems: 'center' }}>
+                      <Button danger small onPress={ () => this._deleteCartItem(item.key_order, item.name_order) } style={{ width: 40, justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name='trash' style={{ fontSize: 11,color: 'white' }}/>
                       </Button>
                     </Right>
