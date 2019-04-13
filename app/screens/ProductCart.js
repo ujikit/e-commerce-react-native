@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Alert, StyleSheet, FlatList, Image, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
-import { Body, Button, Container, Footer, FooterTab, Header, Input, Content, Card, CardItem, Left, Right, Text, Thumbnail } from 'native-base';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import Axios from 'axios';
+import React, { Component } from 'react'
+import { Alert, StyleSheet, FlatList, Image, View, TouchableOpacity, ScrollView, TextInput} from 'react-native'
+import { Body, Button, Container, Footer, FooterTab, Header, Input, Content, Card, CardItem, Left, Right, Text, Thumbnail } from 'native-base'
+import Icon from 'react-native-vector-icons/FontAwesome5'
+import Axios from 'axios'
 
 // Helper
 import { TotalPriceArray } from '../helper/TotalPriceArray'
@@ -10,7 +10,7 @@ import { TotalPriceArray } from '../helper/TotalPriceArray'
 class ProductCart extends Component {
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       order_data: [],
       product_quantity: 0,
@@ -23,14 +23,14 @@ class ProductCart extends Component {
   componentWillMount() {
     this.props.navigation.addListener("willFocus", route => {
 
-      const { navigation } = this.props;
+      const { navigation } = this.props
       const final_order = []
 
       Axios.get(`http://192.168.0.44:3333/api/v1/orders`)
       .then(res => {
         if (res.data.data.length == 0) {
-          return 0
-        }
+          return this.setState({ order_data: [] })
+        } // handle bug after add the first item to cart and then you delete the last one item and go back to the cart list.. and there is an items were cached to the list after deleted. We need to destroy it with this condition.
         for (var i = 0; i < res.data.data.length; i++) {
           final_order.push({
             key_order: res.data.data[i].key_order,
@@ -71,7 +71,7 @@ class ProductCart extends Component {
           product_data_description: description_product,
           temp_product_data_quantity: 1,
           temp_product_data_price: price_product
-        });
+        })
         this.setState({
           order_data: this.state.order_data
         })
@@ -93,7 +93,7 @@ class ProductCart extends Component {
   }
 
   _decQuantity = (index, name_order) => {
-    const newCounter = this.state.order_data[index].temp_quantity_order-1;
+    const newCounter = this.state.order_data[index].temp_quantity_order-1
     if (newCounter.toString().match(/-/g)) { return Alert.alert('My apologize, you have reached a limit order.') }
     this.state.order_data[index].temp_quantity_order = this.state.order_data[index].temp_quantity_order-1
     this.state.order_data[index].temp_price_order = parseInt(this.state.order_data[index].temp_quantity_order, 10)*parseInt(this.state.order_data[index].price_order, 10)
@@ -107,14 +107,6 @@ class ProductCart extends Component {
   }
 
   _deleteCartItem = (key_order, name_order) => {
-    for (var i = 0; i < this.state.order_data.length; i++) {
-    	if (this.state.order_data[i].key_order == key_order ) {
-    		this.state.order_data.splice(i, 1);
-    	}
-    }
-    const total1 = this.state.order_data.map(item => item.temp_price_order)
-    const total2 = TotalPriceArray(total1)
-
     return Alert.alert(
       'Delete cart item',
       `Are you sure want to delete cart item as a "${name_order}" ?`,
@@ -125,6 +117,23 @@ class ProductCart extends Component {
         },
         {
           text: 'OK', onPress: () =>
+          {
+
+            for (var i = 0; i < this.state.order_data.length; i++) {
+              if (this.state.order_data[i].key_order == key_order ) {
+                this.state.order_data.splice(i, 1)
+              }
+            }
+
+            const total1 = this.state.order_data.map(item => item.temp_price_order)
+            let total2;
+            if (this.state.order_data.length === 0) {
+              total2 = "0"
+            }
+            else {
+              total2 = TotalPriceArray(total1)
+            }
+
             Axios.delete(`http://192.168.0.44:3333/api/v1/order/${key_order}`)
             .then(res => {
               if (res.data.status == `success`) {
@@ -137,23 +146,15 @@ class ProductCart extends Component {
             .catch(error => {
               return Alert.alert( ``, `Delete cart error: ${JSON.stringify(error)}` )
             })
+          }
         },
       ],
       { cancelable: false },
     )
-
-
-
-
-    // return Alert.alert(
-    //   ``,
-    //   // `key: ${JSON.stringify(key_order)} data: ${JSON.stringify(result)}`
-    //   `data: ${JSON.stringify(this.state.order_data)}`
-    // )
   }
 
   render() {
-    const { navigate } = this.props.navigation;
+    const { navigate } = this.props.navigation
     if (this.state.order_data.length == 0) {
       return (
         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center',alignItems: 'center' }}>
@@ -245,8 +246,8 @@ class ProductCart extends Component {
           </FooterTab>
         </Footer>
       </Container>
-    );
+    )
   }
 }
 
-export default ProductCart;
+export default ProductCart

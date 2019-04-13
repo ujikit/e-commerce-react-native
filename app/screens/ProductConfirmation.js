@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, StyleSheet, FlatList, Image, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import { Body, Button, Container, Footer, FooterTab, Header, Input, Content, Card, CardItem, Icon, Left, Right, Text, Thumbnail } from 'native-base';
+import { TotalPriceArray } from '../helper/TotalPriceArray'
 
 export default class ProductCart extends React.Component {
 
@@ -16,10 +17,10 @@ export default class ProductCart extends React.Component {
       }
   }
 
-  componentDidMount(){
+  componentWillMount(){
     const { navigation } = this.props;
     const { data_cart, total_price, payment_price, courier_price } = navigation.state.params;
-    const sum_all_price = data_cart.map(item => item.temp_product_data_price);
+    const sum_all_price = TotalPriceArray(data_cart.map(item => item.temp_price_order))
     const final_price = parseInt(sum_all_price, 10) + parseInt(courier_price, 10);
 
     this.setState({
@@ -42,16 +43,16 @@ export default class ProductCart extends React.Component {
               <Card>
                 <CardItem>
                   <Left>
-                    <Thumbnail source={{uri: `${item.product_data_image}`}} />
+                    <Thumbnail source={{uri: `${item.image_order}`}} />
                     <Body>
-                      <Text>{ item.product_data_name }</Text>
-                      <Text note>{`Total: Rp. ${ item.temp_product_data_price }`}</Text>
+                      <Text>{ item.name_order }</Text>
+                      <Text note>{`Total: Rp. ${ item.temp_price_order }`}</Text>
                     </Body>
                   </Left>
                 </CardItem>
               </Card>
             )}
-            keyExtractor={item => item.product_data_key.toString()}
+            keyExtractor={item => item.key_order.toString()}
             ItemSeparatorComponent={this.renderSeparator}
           />
           <View style={{ marginTop: 4 }}>
