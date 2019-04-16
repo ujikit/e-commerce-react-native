@@ -1,109 +1,33 @@
+
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { createStackNavigator, createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
+import { Provider } from 'react-redux';
 
-import RouteBottomNavigator from './RouteBottomNavigator';
-import ProductDetailScreen from '../screens/ProductDetail';
-import ProductCartScreen from '../screens/ProductCart';
-import ProductCheckoutScreen from '../screens/ProductCheckout';
-import ProductTransactionCompleteScreen from '../screens/ProductTransactionComplete';
-import ProductConfirmationScreen from '../screens/ProductConfirmation';
+import LoginScreen from '../screens/Login';
+import store from '../redux/store';
 
-const AppNavigator = createStackNavigator(
+const Root = createStackNavigator(
   {
-    RouteBottomNavigator: {
-      screen: RouteBottomNavigator,
-      headerMode: "none",
+    Login: {
+      screen: LoginScreen,
       navigationOptions: {
         header: null
-      }
-    },
-    ProductDetail: {
-      screen: ProductDetailScreen,
-      headerMode: '',
-      navigationOptions: {
-        title: 'Product Detail',
-        headerStyle: {
-          backgroundColor: '#d71149'
-        },
-        headerTintColor: '#fff'
-      }
-    },
-    ProductCart: {
-      screen: ProductCartScreen,
-      headerMode: '',
-      navigationOptions: {
-        title: 'Cart',
-        headerStyle: {
-          backgroundColor: '#d71149'
-        },
-        headerTintColor: '#fff'
-      }
-    },
-    ProductCheckout: {
-      screen: ProductCheckoutScreen,
-      headerMode: '',
-      navigationOptions: {
-        title: 'Checkout',
-        headerStyle: {
-          backgroundColor: '#d71149'
-        },
-        headerTintColor: '#fff'
-      }
-    },
-    ProductConfirmation: {
-      screen: ProductConfirmationScreen,
-      headerMode: '',
-      navigationOptions: {
-        title: 'Confirmation',
-        headerStyle: {
-          backgroundColor: '#d71149'
-        },
-        headerTintColor: '#fff'
-      }
-    },
-    ProductTransactionComplete: {
-      screen: ProductTransactionCompleteScreen,
-      headerMode: '',
-      navigationOptions: {
-        title: 'Completed',
-        headerStyle: {
-          backgroundColor: '#d71149'
-        },
-        headerTintColor: '#fff'
       }
     }
   },
   {
-    initialRouteName: 'RouteBottomNavigator'
+    initialRouteName: 'Login'
   }
-);
+)
 
-const AppContainer = createAppContainer(AppNavigator);
-
-export default class App extends Component {
+class App extends Component {
   render() {
     return (
-      <AppContainer />
-    );
+      <Provider store={store}>
+        <Root />
+      </Provider>
+    )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+export default App;
