@@ -9,12 +9,31 @@ class RegisterScreen extends Component<Props> {
 
   constructor() {
     super();
-    console.disableYellowBox = true; //disabled warning
+    this.state = {
+      username: undefined
+    }
   }
 
   componentWillMount() {
 
   }
+
+  // _registerUser = () => {
+  //   axios.post('/user', {
+  //     username: this.state.register_data.username,
+  //     lastName: ,
+  //     lastName: ,
+  //     lastName: ,
+  //     lastName: ,
+  //     lastName: ,
+  //   })
+  //   .then(function (response) {
+  //     console.log(response);
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
+  // }
 
   render() {
     return (
@@ -25,23 +44,27 @@ class RegisterScreen extends Component<Props> {
               <Image resizeMode= 'contain' style={{width: 135}} source={require('../../assets/logo.png')} />
             </View>
             <Form style={{ marginBottom: 25 }}>
-              <View style={{ marginTop: 10 }}>
+              <View style={{ marginTop: 5 }}>
+                <Input placeholderTextColor='#b3b3b3' placeholder='Username' />
+                <View style={{ borderBottomColor: 'black', borderBottomWidth: 0.5 }} />
+              </View>
+              <View style={{ marginTop: 5 }}>
                 <Input placeholderTextColor='#b3b3b3' placeholder='First Name' />
                 <View style={{ borderBottomColor: 'black', borderBottomWidth: 0.5 }} />
               </View>
-              <View style={{ marginTop: 10 }}>
+              <View style={{ marginTop: 5 }}>
                 <Input placeholderTextColor='#b3b3b3' placeholder='Last Name' />
                 <View style={{ borderBottomColor: 'black', borderBottomWidth: 0.5 }} />
               </View>
-              <View style={{ marginTop: 10 }}>
+              <View style={{ marginTop: 5 }}>
                 <Input placeholderTextColor='#b3b3b3' placeholder='Email' />
                 <View style={{ borderBottomColor: 'black', borderBottomWidth: 0.5 }} />
               </View>
-              <View style={{ marginTop: 10 }}>
+              <View style={{ marginTop: 5 }}>
                 <Input placeholderTextColor='#b3b3b3' placeholder='Phone' />
                 <View style={{ borderBottomColor: 'black', borderBottomWidth: 0.5 }} />
               </View>
-              <View style={{ marginTop: 10 }}>
+              <View style={{ marginTop: 5 }}>
                 <Input placeholderTextColor='#b3b3b3' placeholder='New Password' secureTextEntry={true}/>
                 <View style={{ borderBottomColor: 'black', borderBottomWidth: 0.5 }} />
               </View>

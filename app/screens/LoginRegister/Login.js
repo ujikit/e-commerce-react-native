@@ -28,7 +28,7 @@ class LoginScreen extends Component<Props> {
             </View>
             <Form style={{ marginBottom: 20 }}>
               <View style={{ marginTop: 20 }}>
-                <Text style={{ fontWeight: 'bold', marginBottom: -5 }}>EMAIL / USERNAME</Text>
+                <Text style={{ fontWeight: 'bold', marginBottom: -5 }}>USERNAME</Text>
                 <Input/>
                 <View style={{ borderBottomColor: 'black', borderBottomWidth: 0.5 }} />
               </View>
