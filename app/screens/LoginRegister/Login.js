@@ -5,9 +5,9 @@ import Hr from "react-native-hr-component";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { connect } from 'react-redux';
-import { incCounter, decCounter } from '../actions/actCounter';
+import { incCounter, decCounter } from '../../actions/actCounter';
 
-class HomeScreen extends Component<Props> {
+class LoginScreen extends Component<Props> {
 
   constructor() {
     super();
@@ -15,21 +15,19 @@ class HomeScreen extends Component<Props> {
   }
 
   componentWillMount() {
-    setInterval(() => {
-      this.props.dispatch(incCounter())
-      // Alert.alert(``,`${JSON.stringify(this.props.counter)}`)
-      // console.log(`${JSON.stringify(this.props.counter)}`)
-    }, 2000)
+
   }
 
   render() {
     return (
       <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
         <Container style={{ padding: 15 }}>
-          <Content style={{ padding: 5, marginTop: 120 }}>
-            <Form style={{ marginBottom: 25 }}>
+          <Content style={{ padding: 5, marginTop: 45 }}>
+            <View style={{ alignItems: 'center', marginBottom: 20 }}>
+              <Image resizeMode= 'contain' style={{width: 135}} source={require('../../assets/logo.png')} />
+            </View>
+            <Form style={{ marginBottom: 20 }}>
               <View style={{ marginTop: 20 }}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: -5 }}>{`Test redux: ${JSON.stringify(this.props.counter.count)}`}</Text>
                 <Text style={{ fontWeight: 'bold', marginBottom: -5 }}>EMAIL / USERNAME</Text>
                 <Input/>
                 <View style={{ borderBottomColor: 'black', borderBottomWidth: 0.5 }} />
@@ -40,6 +38,12 @@ class HomeScreen extends Component<Props> {
                 <View style={{ borderBottomColor: 'black', borderBottomWidth: 0.5 }} />
               </View>
             </Form>
+
+            <View style={{ marginBottom: 20 }}>
+              <Button block style={{ backgroundColor: '#d71149' }}>
+                <Text style={{ fontSize: 15, color: 'white' }}>Login</Text>
+              </Button>
+            </View>
 
             <Hr lineColor="#ccc" width={1} text="   or login with   " textStyles={{ fontSize: 14, color: '#b3b3b3' }} />
 
@@ -71,24 +75,19 @@ class HomeScreen extends Component<Props> {
                 </Button>
               </View>
             </View>
-            <View style={{ marginTop: 14 }}>
-              <Button block style={{ backgroundColor: '#d71149' }}>
-                <Text style={{ fontSize: 15, color: 'white' }}>Login</Text>
-              </Button>
-            </View>
             <View style={{ flexDirection: 'row', marginTop: 14, alignItems: 'center' }}>
-              <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                <Text style={{ fontSize: 14, color: '#b3b3b3' }}>Belum punya akun?</Text>
+              <View style={{ flex: 1.4, alignItems: 'flex-end' }}>
+                <Text style={{ fontSize: 14, color: '#b3b3b3' }}>Don't have account?</Text>
               </View>
               <View style={{ flex: 1, alignItems: 'flex-start', marginLeft: 6.5 }}>
-                <TouchableOpacity style={{ backgroundColor: 'white' }} onPress={() => alert('tes')}>
-                  <Text style={{ fontSize: 14, color: '#d71149', fontWeight: 'bold' }}>Daftar sekarang</Text>
+                <TouchableOpacity style={{ backgroundColor: 'white' }} onPress={() => this.props.navigation.navigate('Register')}>
+                  <Text style={{ fontSize: 14, color: '#d71149', fontWeight: 'bold' }}>Sign up now</Text>
                 </TouchableOpacity>
               </View>
             </View>
-            <View style={{ marginTop: 7, alignItems: 'center' }}>
-              <TouchableOpacity style={{ backgroundColor: 'white' }} onPress={() => alert('tes')}>
-                <Text style={{ fontSize: 14, color: '#d71149' }}>Lupa password?</Text>
+            <View style={{ marginTop: 7, marginLeft: 5, alignItems: 'center', display: 'none' }}>
+              <TouchableOpacity style={{ backgroundColor: 'white' }} onPress={() => this.props.navigation.navigate('ForgotPassword')}>
+                <Text style={{ fontSize: 14, color: '#d71149' }}>Forgot password?</Text>
               </TouchableOpacity>
             </View>
           </Content>
@@ -108,4 +107,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(HomeScreen)
+export default connect(mapStateToProps)(LoginScreen)
