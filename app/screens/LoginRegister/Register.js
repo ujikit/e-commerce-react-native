@@ -35,10 +35,13 @@ class RegisterScreen extends Component<Props> {
       phone_user: this.state.phone_user,
       photo_user: this.state.photo_user
     })
-    .then(function (response) {
-      return Alert.alert(`${response.data.status}`,`${response.data.data}`)
+    .then((response) => {
+      Alert.alert(`${response.data.status}`,`${response.data.data}`)
+      setTimeout(() => {
+        return this.props.navigation.navigate('Home', { firstname_user: this.state.firstname_user })
+      }, 2500)
     })
-    .catch(function (error) {
+    .catch((error) => {
       return Alert.alert(`${response.data.status}`,`${response.data.data}`)
     })
   }

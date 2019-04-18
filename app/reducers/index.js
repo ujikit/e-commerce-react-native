@@ -1,9 +1,9 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux'
 
-import counter from './counter';
+import fetch_all_products from './fetch_all_products'
 
 const appReducer = combineReducers({
-  counter: counter
-});
+  fetch_all_products: fetch_all_products
+})
 
-export default appReducer;
+export default appReducer

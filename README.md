@@ -9,7 +9,7 @@
 - [ ] Profile Page (endpoint /api/v1/user/:id)
 - [ ] Reveal Password Text Input with Eye Icon
 - [ ] Forgot Password Screen
-- ================ Middleware =================
-- [ ] Redux
+- ================ Redux POC ==================
+- [x] Redux
 - [ ] Redux Thunk
 - [ ] Redux Promise Middleware

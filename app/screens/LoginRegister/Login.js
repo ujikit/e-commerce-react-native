@@ -5,7 +5,6 @@ import Hr from "react-native-hr-component";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { connect } from 'react-redux';
-import { incCounter, decCounter } from '../../actions/actCounter';
 
 class LoginScreen extends Component<Props> {
 
@@ -103,7 +102,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    counter: state.counter
+
   }
 }
 
