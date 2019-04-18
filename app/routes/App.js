@@ -30,7 +30,7 @@ const Root = createStackNavigator(
     }
   },
   {
-    initialRouteName: 'Login'
+    initialRouteName: 'Register'
   }
 )
 
