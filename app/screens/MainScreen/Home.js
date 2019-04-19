@@ -24,7 +24,7 @@ class HomeScreen extends Component<Props> {
     this.props.dispatch(fetchAllProducts())
     Axios.get('http://192.168.0.44:3333/api/v1/products')
     .then(res => {
-      Alert.alert(`Welcome to Ujikit!`,`Hey ${navigation.getParam('firstname_user')}, you're finally ready, have a look around!`)
+      // Alert.alert(`Welcome to Ujikit!`,`Hey ${navigation.getParam('firstname_user')}, you're finally ready, have a look around!`)
       return this.props.dispatch(fetchAllProductsSuccess(res.data.data))
     })
     .catch(error => {
